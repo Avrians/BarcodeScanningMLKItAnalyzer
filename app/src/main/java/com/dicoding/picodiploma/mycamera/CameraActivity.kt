@@ -1,5 +1,7 @@
 package com.dicoding.picodiploma.mycamera
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -90,6 +92,27 @@ class CameraActivity : AppCompatActivity() {
                 val alertDialog = AlertDialog.Builder(this)
                 alertDialog
                     .setMessage(barcode.rawValue)
+                    .setPositiveButton(
+                        "Buka"
+                    ) { _, _ ->
+                        firstCall = true
+                        when (barcode.valueType) {
+                            Barcode.TYPE_URL -> {
+                                val openBrowserIntent = Intent(Intent.ACTION_VIEW)
+                                openBrowserIntent.data = Uri.parse(barcode.url?.url)
+                                startActivity(openBrowserIntent)
+                            }
+
+                            else -> {
+                                Toast.makeText(this, "Unsupported data type", Toast.LENGTH_SHORT)
+                                    .show()
+                                startCamera()
+                            }
+                        }
+                    }
+                    .setNegativeButton("Scan lagi") { _, _ ->
+                        firstCall = true
+                    }
                     .setCancelable(false)
                     .create()
                 alertDialog.show()
